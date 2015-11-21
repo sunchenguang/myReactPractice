@@ -2,30 +2,23 @@
  *  babel
  */
 var gulp = require('gulp'),
-    babel = require('gulp-babel'),
-    bs = require('browser-sync').create(),
-    reload = bs.reload,
-    runSequence = require('run-sequence').use(gulp),
-    src = 'src', //源目录路径
-    dist = 'dist'; //输出路径
-gulp.task('babel', function() {
-    var onError = function(err) {
-        notify.onError({
-            title: "Gulp",
-            subtitle: "Failure!",
-            message: "Error: <%= error.message %>",
-            sound: "Beep"
-        })(err);
-    };
+    $ = require('gulp-load-plugins')(),
+    bs = require('browser-sync').create();
 
-    return gulp.src(src + '/**/*.jsx')
-        .pipe(cached('react')) //把所有东西放入缓存中，每次只编译修改过的文件
-        .pipe(plumber({ //发生错误时不会中断 gulp 的流程，同时触发 notify 消息提示
-            errorHandler: onError
+var reload = bs.reload,
+    runSequence = require('run-sequence').use(gulp),
+    src = './src', //源目录路径
+    dist = './dist'; //输出路径
+
+
+gulp.task('babel', function() {
+    return gulp.src('./src/*.jsx')
+        .pipe($.babel({
+            presets: ['es2015']
         }))
-        .pipe(babel())
-        .pipe(gulp.dest(dist));
+        .pipe(gulp.dest('dist'));
 });
+
 
 // Start the server
 gulp.task('bs', function() {
@@ -37,7 +30,7 @@ gulp.task('bs', function() {
 
     bs.init(files, {
         server: {
-            baseDir: src,
+            baseDir: './'
         }
     });
 });
@@ -46,4 +39,9 @@ gulp.task('server', ['babel', 'bs'], function() {
     gulp.watch(src + '/**/*.jsx', function() {
         runSequence('babel', reload);
     });
+});
+gulp.task('lint', function() {
+    return gulp.src('./dist/*.js')
+        .pipe($.jshint())
+        .pipe($.jshint.reporter('default'));
 });
