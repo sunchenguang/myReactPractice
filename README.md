@@ -1,5 +1,6 @@
 ### myReactPractice
 
+[![Build Status](https://travis-ci.org/[sunchenguang]/[myReactPractice].png)](https://travis-ci.org/[sunchenguang]/[myReactPractice])
 
 - learn React syntax and thought.
 - Test .travis.yml
